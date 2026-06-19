@@ -1,0 +1,1 @@
+{"nodes": [], "edges": [{"source": "35_gptmodel_gptmodel", "target": "34_transformerblock_transformerblock", "relation": "references", "confidence": "EXTRACTED", "confidence_score": 1.0, "source_file": "phases/19-capstone-projects/35-gpt-model-assembly/docs/en.md", "source_location": null, "weight": 1.0}], "hyperedges": []}

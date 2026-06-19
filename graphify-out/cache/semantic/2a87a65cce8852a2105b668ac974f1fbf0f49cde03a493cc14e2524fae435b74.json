@@ -1,0 +1,1 @@
+{"nodes": [{"id": "handoffs_triage_agent", "label": "Triage Agent", "file_type": "concept", "source_file": "phases/16-multi-agent-and-swarms/11-handoffs-and-routines/docs/en.md", "source_location": null, "source_url": "https://developers.openai.com/cookbook/examples/orchestrating_agents", "captured_at": null, "author": null, "contributor": null}], "edges": [], "hyperedges": []}

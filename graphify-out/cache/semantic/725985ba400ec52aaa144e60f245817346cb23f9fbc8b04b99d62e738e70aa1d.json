@@ -1,0 +1,1 @@
+{"nodes": [{"id": "memgpt_tiers_memgpt", "label": "MemGPT", "file_type": "concept", "source_file": "phases/14-agent-engineering/07-memory-virtual-context-memgpt/assets/memgpt-tiers.svg", "source_location": null, "source_url": "https://arxiv.org/abs/2310.08560", "captured_at": null, "author": "Packer et al.", "contributor": null}], "edges": [], "hyperedges": []}

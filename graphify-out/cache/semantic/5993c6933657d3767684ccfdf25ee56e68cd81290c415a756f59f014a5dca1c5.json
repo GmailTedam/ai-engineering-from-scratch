@@ -1,0 +1,1 @@
+{"nodes": [{"id": "skillgpuautoscalerplan_gpuautoscalerplan", "label": "GPU Autoscaler Plan", "file_type": "document", "source_file": "phases/17-infrastructure-and-production/03-gpu-autoscaling-kubernetes/outputs/skill-gpu-autoscaler-plan.md", "source_location": null, "source_url": null, "captured_at": null, "author": null, "contributor": null}], "edges": [], "hyperedges": []}

@@ -1,0 +1,1 @@
+{"nodes": [], "edges": [{"source": "cosine_lr_warmup_trainstate", "target": "cosine_lr_warmup_cosinewithwarmup", "relation": "references", "confidence": "EXTRACTED", "confidence_score": 1.0, "source_file": "phases/19-capstone-projects/44-cosine-lr-warmup/docs/en.md", "source_location": null, "weight": 1.0}], "hyperedges": []}

@@ -1,0 +1,1 @@
+{"nodes": [], "edges": [{"source": "36_trainingloop_train", "target": "35_gptmodel_gptmodel", "relation": "references", "confidence": "EXTRACTED", "confidence_score": 1.0, "source_file": "phases/19-capstone-projects/36-training-loop-eval/docs/en.md", "source_location": null, "weight": 1.0}], "hyperedges": []}

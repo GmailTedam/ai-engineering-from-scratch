@@ -1,0 +1,1 @@
+{"nodes": [{"id": "openaiagents_sdk", "label": "OpenAI Agents SDK: Handoffs, Guardrails, Tracing", "file_type": "document", "source_file": "phases/14-agent-engineering/16-openai-agents-sdk/docs/en.md", "source_location": null, "source_url": "https://openai.github.io/openai-agents-python/", "captured_at": null, "author": null, "contributor": null}], "edges": [], "hyperedges": []}
