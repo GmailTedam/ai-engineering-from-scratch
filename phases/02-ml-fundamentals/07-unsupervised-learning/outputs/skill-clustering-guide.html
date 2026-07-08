@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>skill-clustering-guide.md</title>
+  <script>(function(){try{var pref=localStorage.getItem("theme")||"system";var dark=pref==="dark"||(pref==="system"&&window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches);document.documentElement.dataset.theme=dark?"dark":"light";document.documentElement.dataset.themePreference=pref;}catch(e){document.documentElement.dataset.theme="light";document.documentElement.dataset.themePreference="system";}})();</script>
+  <link rel="stylesheet" href="../../../../../_html_docs/_design_system/colors_and_type.css?v=2026-07-05T11%3A08%3A14.247Z">
+  <link rel="stylesheet" href="../../../../../_html_docs/_design_system/utilities.css?v=2026-07-05T11%3A08%3A14.247Z">
+  <link rel="stylesheet" href="../../../../../_html_docs/_assets/docs.css?v=2026-07-05T11%3A08%3A14.247Z">
+  <script src="../../../../../_html_docs/_assets/index.js?v=2026-07-05T11%3A08%3A14.247Z" defer></script>
+</head>
+<body class="bt-app docs-app">
+  <a class="skip-link" href="#main-content">Skip to document</a>
+  <div class="page-shell">
+    <aside class="toc-panel bt-card">
+      <a class="index-link bt-nav-item" href="../../../../../_html_docs/guides-index.html">Documentation index</a>
+      <div class="source-path">ai-engineering-from-scratch\phases\02-ml-fundamentals\07-unsupervised-learning\outputs\skill-clustering-guide.md</div>
+      <nav aria-label="Table of contents">
+        <h2>Contents</h2>
+        <ol class="toc-list"><li class="toc-depth-2"><a href="#name-skill-clustering-guide-description-choose-the-right-clustering-algorithm-based-on-data-shape-noise-and-constraints-version-100-phase-2-lesson-7-tags-clustering-k-means-dbscan-hierarchical-gmm-unsupervised">name: skill-clustering-guide
+description: Choose the right clustering algorithm based on data shape, noise, and constraints
+version: 1.0.0
+phase: 2
+lesson: 7
+tags: [clustering, k-means, dbscan, hierarchical, gmm, unsupervised]</a></li><li class="toc-depth-1"><a href="#clustering-algorithm-selection-guide">Clustering Algorithm Selection Guide</a></li><li class="toc-depth-2"><a href="#decision-checklist">Decision Checklist</a></li><li class="toc-depth-2"><a href="#when-to-use-each-approach">When to use each approach</a></li><li class="toc-depth-2"><a href="#evaluating-cluster-quality-no-labels">Evaluating cluster quality (no labels)</a></li><li class="toc-depth-2"><a href="#common-mistakes">Common mistakes</a></li><li class="toc-depth-2"><a href="#quick-reference">Quick reference</a></li></ol>
+      </nav>
+    </aside>
+    <main class="content-panel bt-card bt-card-elevated" id="main-content">
+      <header class="document-header">
+        <div class="document-heading">
+          <div class="eyebrow type-label">ai-engineering-from-scratch</div>
+          <h1>skill-clustering-guide.md</h1>
+          <div class="sx-rainbow-underline"></div>
+        </div>
+        <div class="document-actions">
+          <button class="bt-btn bt-btn-sm theme-toggle" type="button" data-theme-toggle>
+            Theme: <span data-theme-label>System</span>
+          </button>
+        </div>
+        <div class="document-meta">
+          <a href="../../../../../_html_docs/_source_markdown/ai-engineering-from-scratch/phases/02-ml-fundamentals/07-unsupervised-learning/outputs/skill-clustering-guide.md">Source Markdown</a>
+          <span>ai-engineering-from-scratch\phases\02-ml-fundamentals\07-unsupervised-learning\outputs\skill-clustering-guide.md</span>
+        </div>
+      </header>
+      <article class="markdown-body">
+<hr>
+<h2 id="name-skill-clustering-guide-description-choose-the-right-clustering-algorithm-based-on-data-shape-noise-and-constraints-version-100-phase-2-lesson-7-tags-clustering-k-means-dbscan-hierarchical-gmm-unsupervised"><a class="heading-anchor" href="#name-skill-clustering-guide-description-choose-the-right-clustering-algorithm-based-on-data-shape-noise-and-constraints-version-100-phase-2-lesson-7-tags-clustering-k-means-dbscan-hierarchical-gmm-unsupervised" aria-label="Link to section">#</a>name: skill-clustering-guide
+description: Choose the right clustering algorithm based on data shape, noise, and constraints
+version: 1.0.0
+phase: 2
+lesson: 7
+tags: [clustering, k-means, dbscan, hierarchical, gmm, unsupervised]</h2>
+<h1 id="clustering-algorithm-selection-guide"><a class="heading-anchor" href="#clustering-algorithm-selection-guide" aria-label="Link to section">#</a>Clustering Algorithm Selection Guide</h1>
+<p>Clustering has no single best algorithm. The right choice depends on cluster shape, whether you know the number of clusters, how much noise is in the data, and how large the dataset is.</p>
+<h2 id="decision-checklist"><a class="heading-anchor" href="#decision-checklist" aria-label="Link to section">#</a>Decision Checklist</h2>
+<ol>
+<li><p>Do you know the number of clusters?</p>
+<ul>
+<li>Yes: K-Means or GMM</li>
+<li>No: DBSCAN (finds clusters automatically), or hierarchical (cut the dendrogram at different levels)</li>
+</ul>
+</li>
+<li><p>What shape are the clusters?</p>
+<ul>
+<li>Roughly spherical (blob-like): K-Means</li>
+<li>Elliptical with different sizes: GMM</li>
+<li>Arbitrary shapes (crescents, rings, chains): DBSCAN</li>
+<li>Nested or hierarchical: hierarchical clustering</li>
+</ul>
+</li>
+<li><p>Does the data contain noise or outliers?</p>
+<ul>
+<li>Yes: DBSCAN (labels noise points explicitly) or GMM (low-probability points are outliers)</li>
+<li>No: K-Means is fine</li>
+</ul>
+</li>
+<li><p>Do you need soft assignments (probabilities)?</p>
+<ul>
+<li>Yes: GMM gives P(cluster | data point) for each cluster</li>
+<li>No: K-Means or DBSCAN give hard assignments</li>
+</ul>
+</li>
+<li><p>How large is the dataset?</p>
+<ul>
+<li>Under 10,000: any algorithm works</li>
+<li>10,000 to 1,000,000: K-Means (fast), Mini-Batch K-Means (faster)</li>
+<li>Over 1,000,000: Mini-Batch K-Means or BIRCH. Hierarchical is too slow.</li>
+</ul>
+</li>
+</ol>
+<h2 id="when-to-use-each-approach"><a class="heading-anchor" href="#when-to-use-each-approach" aria-label="Link to section">#</a>When to use each approach</h2>
+<p><strong>K-Means</strong>: the default starting point. Fast (O(n * k * iterations)), simple, and good enough for many problems. Use the elbow method or silhouette score to pick K. Limitations: assumes spherical clusters, sensitive to initialization (use K-Means++ or run multiple times), cannot handle varying cluster sizes well.</p>
+<p><strong>DBSCAN</strong>: best for discovering clusters of arbitrary shape and automatically detecting outliers. Two parameters: eps (neighborhood radius) and min_samples (minimum density). Does not require specifying K. Limitations: struggles when clusters have very different densities, and tuning eps can be tricky. Use a k-distance plot to estimate eps: compute the distance to each point&#39;s k-th nearest neighbor, sort, and look for an elbow.</p>
+<p><strong>Hierarchical (Agglomerative)</strong>: builds a tree of merges. Useful when you want to explore cluster structure at multiple granularities (cut the dendrogram at different heights). Ward&#39;s linkage works best for compact clusters. Single linkage finds elongated clusters but is sensitive to noise. Limitations: O(n^2) memory and O(n^3) time, so impractical for large datasets.</p>
+<p><strong>GMM (Gaussian Mixture Models)</strong>: soft clustering with probabilistic assignments. Models each cluster as a Gaussian distribution with its own mean and covariance. Better than K-Means when clusters are elliptical or overlapping. Use BIC (Bayesian Information Criterion) to select the number of components. Limitations: assumes Gaussian distributions, can fail on non-convex shapes, sensitive to initialization.</p>
+<h2 id="evaluating-cluster-quality-no-labels"><a class="heading-anchor" href="#evaluating-cluster-quality-no-labels" aria-label="Link to section">#</a>Evaluating cluster quality (no labels)</h2>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>What it measures</th>
+<th>Range</th>
+<th>Use when</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Silhouette score</td>
+<td>Cohesion vs separation</td>
+<td>-1 to 1 (higher is better)</td>
+<td>Comparing K values or algorithms</td>
+</tr>
+<tr>
+<td>Inertia (within-cluster SS)</td>
+<td>Tightness of clusters</td>
+<td>0 to inf (lower is better)</td>
+<td>Elbow method for K-Means</td>
+</tr>
+<tr>
+<td>BIC / AIC</td>
+<td>Model fit with complexity penalty</td>
+<td>Lower is better</td>
+<td>Choosing number of GMM components</td>
+</tr>
+<tr>
+<td>Calinski-Harabasz index</td>
+<td>Ratio of between to within variance</td>
+<td>Higher is better</td>
+<td>Quick comparison</td>
+</tr>
+<tr>
+<td>Davies-Bouldin index</td>
+<td>Average similarity between clusters</td>
+<td>Lower is better</td>
+<td>Penalizes overlapping clusters</td>
+</tr>
+</tbody></table>
+<h2 id="common-mistakes"><a class="heading-anchor" href="#common-mistakes" aria-label="Link to section">#</a>Common mistakes</h2>
+<ul>
+<li>Running K-Means without scaling features (features on larger scales dominate the distance calculation)</li>
+<li>Picking K by eyeballing data in 2D when the actual data is high-dimensional (use silhouette scores)</li>
+<li>Using K-Means on non-spherical clusters (crescent or ring-shaped data needs DBSCAN)</li>
+<li>Setting DBSCAN eps too large (everything in one cluster) or too small (everything is noise)</li>
+<li>Treating cluster labels as ground truth (clustering is exploratory; validate with domain knowledge)</li>
+<li>Running hierarchical clustering on datasets with more than 20,000 points (memory and time explode)</li>
+</ul>
+<h2 id="quick-reference"><a class="heading-anchor" href="#quick-reference" aria-label="Link to section">#</a>Quick reference</h2>
+<table>
+<thead>
+<tr>
+<th>Algorithm</th>
+<th>Cluster shape</th>
+<th>Finds K</th>
+<th>Handles noise</th>
+<th>Soft assignments</th>
+<th>Scalability</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>K-Means</td>
+<td>Spherical</td>
+<td>No (you set K)</td>
+<td>No</td>
+<td>No</td>
+<td>Millions</td>
+</tr>
+<tr>
+<td>Mini-Batch K-Means</td>
+<td>Spherical</td>
+<td>No</td>
+<td>No</td>
+<td>No</td>
+<td>Tens of millions</td>
+</tr>
+<tr>
+<td>DBSCAN</td>
+<td>Arbitrary</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+<td>Hundreds of thousands</td>
+</tr>
+<tr>
+<td>Hierarchical</td>
+<td>Any (linkage-dependent)</td>
+<td>Flexible (cut dendrogram)</td>
+<td>Depends on linkage</td>
+<td>No</td>
+<td>Under 20k</td>
+</tr>
+<tr>
+<td>GMM</td>
+<td>Elliptical</td>
+<td>No (you set K)</td>
+<td>Partial (low probability)</td>
+<td>Yes</td>
+<td>Under 100k</td>
+</tr>
+<tr>
+<td>HDBSCAN</td>
+<td>Arbitrary</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Partial</td>
+<td>Hundreds of thousands</td>
+</tr>
+</tbody></table>
+
+      </article>
+      <footer class="document-footer">
+        Generated from Markdown on 2026-07-05T11:08:14.247Z.
+      </footer>
+    </main>
+  </div>
+</body>
+</html>

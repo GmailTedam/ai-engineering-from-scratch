@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>skill-rollout-runbook.md</title>
+  <script>(function(){try{var pref=localStorage.getItem("theme")||"system";var dark=pref==="dark"||(pref==="system"&&window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches);document.documentElement.dataset.theme=dark?"dark":"light";document.documentElement.dataset.themePreference=pref;}catch(e){document.documentElement.dataset.theme="light";document.documentElement.dataset.themePreference="system";}})();</script>
+  <link rel="stylesheet" href="../../../../../_html_docs/_design_system/colors_and_type.css?v=2026-07-05T11%3A08%3A14.247Z">
+  <link rel="stylesheet" href="../../../../../_html_docs/_design_system/utilities.css?v=2026-07-05T11%3A08%3A14.247Z">
+  <link rel="stylesheet" href="../../../../../_html_docs/_assets/docs.css?v=2026-07-05T11%3A08%3A14.247Z">
+  <script src="../../../../../_html_docs/_assets/index.js?v=2026-07-05T11%3A08%3A14.247Z" defer></script>
+</head>
+<body class="bt-app docs-app">
+  <a class="skip-link" href="#main-content">Skip to document</a>
+  <div class="page-shell">
+    <aside class="toc-panel bt-card">
+      <a class="index-link bt-nav-item" href="../../../../../_html_docs/guides-index.html">Documentation index</a>
+      <div class="source-path">ai-engineering-from-scratch\phases\17-infrastructure-and-production\20-shadow-canary-progressive\outputs\skill-rollout-runbook.md</div>
+      <nav aria-label="Table of contents">
+        <h2>Contents</h2>
+        <ol class="toc-list"><li class="toc-depth-2"><a href="#name-rollout-runbook-description-design-a-shadow-canary-ab-100-rollout-plan-for-a-new-llm-model-or-prompt-template-with-five-canary-gates-noise-floor-aware-thresholds-and-a-seconds-fast-rollback-path-version-100-phase-17-lesson-20-tags-rollout-canary-shadow-progressive-delivery-feature-flags-argo-rollouts-flagger-kserve">name: rollout-runbook
+description: Design a shadow → canary → A/B → 100% rollout plan for a new LLM model or prompt template, with five canary gates, noise-floor-aware thresholds, and a seconds-fast rollback path.
+version: 1.0.0
+phase: 17
+lesson: 20
+tags: [rollout, canary, shadow, progressive-delivery, feature-flags, argo-rollouts, flagger, kserve]</a></li></ol>
+      </nav>
+    </aside>
+    <main class="content-panel bt-card bt-card-elevated" id="main-content">
+      <header class="document-header">
+        <div class="document-heading">
+          <div class="eyebrow type-label">ai-engineering-from-scratch</div>
+          <h1>skill-rollout-runbook.md</h1>
+          <div class="sx-rainbow-underline"></div>
+        </div>
+        <div class="document-actions">
+          <button class="bt-btn bt-btn-sm theme-toggle" type="button" data-theme-toggle>
+            Theme: <span data-theme-label>System</span>
+          </button>
+        </div>
+        <div class="document-meta">
+          <a href="../../../../../_html_docs/_source_markdown/ai-engineering-from-scratch/phases/17-infrastructure-and-production/20-shadow-canary-progressive/outputs/skill-rollout-runbook.md">Source Markdown</a>
+          <span>ai-engineering-from-scratch\phases\17-infrastructure-and-production\20-shadow-canary-progressive\outputs\skill-rollout-runbook.md</span>
+        </div>
+      </header>
+      <article class="markdown-body">
+<hr>
+<h2 id="name-rollout-runbook-description-design-a-shadow-canary-ab-100-rollout-plan-for-a-new-llm-model-or-prompt-template-with-five-canary-gates-noise-floor-aware-thresholds-and-a-seconds-fast-rollback-path-version-100-phase-17-lesson-20-tags-rollout-canary-shadow-progressive-delivery-feature-flags-argo-rollouts-flagger-kserve"><a class="heading-anchor" href="#name-rollout-runbook-description-design-a-shadow-canary-ab-100-rollout-plan-for-a-new-llm-model-or-prompt-template-with-five-canary-gates-noise-floor-aware-thresholds-and-a-seconds-fast-rollback-path-version-100-phase-17-lesson-20-tags-rollout-canary-shadow-progressive-delivery-feature-flags-argo-rollouts-flagger-kserve" aria-label="Link to section">#</a>name: rollout-runbook
+description: Design a shadow → canary → A/B → 100% rollout plan for a new LLM model or prompt template, with five canary gates, noise-floor-aware thresholds, and a seconds-fast rollback path.
+version: 1.0.0
+phase: 17
+lesson: 20
+tags: [rollout, canary, shadow, progressive-delivery, feature-flags, argo-rollouts, flagger, kserve]</h2>
+<p>Given a candidate change (new model, new prompt template, new router policy), baseline production metrics, and risk tolerance, produce a rollout runbook.</p>
+<p>Produce:</p>
+<ol>
+<li>Shadow plan. Duration (24-72 hours). Metrics logged: outputs, token counts, latency, refusal, error. Alert on: &gt;20% cost shift, &gt;30% output length shift, any schema violation.</li>
+<li>Canary progression. Stages (1% → 10% → 25% → 50% → 75% → 100%). Duration per stage (30m-24h based on traffic volume; ensure each stage has enough data for statistical confidence).</li>
+<li>Five gates. Specify the exact thresholds for latency P99, cost/request, error/refusal, output-length P99, thumbs-down rate. Set above noise floor (expect 15% irreducible variance).</li>
+<li>Tooling. Name the rollout controller (Argo Rollouts, Flagger, KServe) and the feature flag system for instant rollback.</li>
+<li>Rollback path. Document the three actions: flip flag → revert pinned digest → verify. Target time: under 60 seconds end to end.</li>
+<li>Skip A/B? Justify. Improved-variant changes skip A/B; distinctly different changes (new behavior, new cost curve) require A/B.</li>
+</ol>
+<p>Hard rejects:</p>
+<ul>
+<li>Skipping shadow mode. Refuse — cost spikes and length regressions slip past offline eval.</li>
+<li>Gates tighter than 15% variance. Refuse — false alarms will halt legitimate rollouts.</li>
+<li>Rollback that requires redeploy. Refuse — it is not a rollback, it is a damage report.</li>
+</ul>
+<p>Refusal rules:</p>
+<ul>
+<li>If the change is safety-critical (e.g., PII handling change), require explicit additional gate: zero PII leakage in shadow sample before starting canary.</li>
+<li>If traffic volume is &lt;100 req/hour, require extended canary stages — otherwise gate noise overwhelms signal.</li>
+<li>If the team cannot provide baseline metrics for the five canary gates, refuse the rollout — baseline is prerequisite.</li>
+</ul>
+<p>Output: a one-page runbook with shadow, canary, gates, tooling, rollback, A/B posture. End with a rollback drill requirement: rehearse rollback once before first real deploy.</p>
+
+      </article>
+      <footer class="document-footer">
+        Generated from Markdown on 2026-07-05T11:08:14.247Z.
+      </footer>
+    </main>
+  </div>
+</body>
+</html>
